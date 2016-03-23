@@ -1,18 +1,20 @@
 package com.example.luis.placerest;
 
-public class Restaurant {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Restaurant implements Parcelable{
     private String address;
     private String[][] category_labels;
     private String country;
-    private int latitude;
-    private int longitude;
     private String name;
-    private int postCode;
     private String region;
     private String locality;
     private String tel;
     private String website;
-
+    private int latitude;
+    private int longitude;
+    private int postCode;
 
     public Restaurant(){
 
@@ -118,5 +120,22 @@ public class Restaurant {
     }
 
 
+    @Override
+    public int describeContents() {
+        return this.hashCode();
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(country);
+        dest.writeString(name);
+        dest.writeString(region);
+        dest.writeString(locality);
+        dest.writeString(tel);
+        dest.writeString( website);
+        dest.writeString(address);
+        dest.writeInt(latitude);
+        dest.writeInt(longitude);
+        dest.writeInt(postCode);
+    }
 }

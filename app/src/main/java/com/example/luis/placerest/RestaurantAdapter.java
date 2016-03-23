@@ -101,4 +101,5 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantViewHolder
         views.showActions(mCurrentlyExpandedPosition == position,restaurantList.get(position));
 
     }
+
 }

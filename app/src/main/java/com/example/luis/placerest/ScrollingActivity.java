@@ -10,6 +10,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -61,21 +63,16 @@ public class ScrollingActivity extends AppCompatActivity implements View.OnClick
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
-        mAdapter = new RestaurantAdapter(createList(1));
+        mAdapter = new RestaurantAdapter(createList());
         mRecyclerView.setAdapter(mAdapter);
+        if (savedInstanceState != null) {
+            // Restore value of members from saved state
+           updateList(savedInstanceState.getParcelableArrayList("restaurants"));
+        }
     }
 
-    private List createList(int size) {
-
+    private List createList() {
         result = new ArrayList();
-        for (int i = 1; i <= size; i++) {
-            Restaurant ci = new Restaurant();
-            ci.setName("Luis");
-            ci.setAddress("Some Where drive");
-            result.add(ci);
-
-        }
-
         return result;
     }
 
@@ -121,10 +118,10 @@ public class ScrollingActivity extends AppCompatActivity implements View.OnClick
         if (id == R.id.action_settings) {
             return true;
         }
-        if (id == R.id.action_go) {
+/*        if (id == R.id.action_go) {
             requestSomething(url+"filters={\"$and\":[{\"country\":{\"$eq\":\"PR\"}}," + "{\"category_labels\":{\"$includes\":\"restaurant\"}}]}"+Key);
             return true;
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 
@@ -205,5 +202,11 @@ public class ScrollingActivity extends AppCompatActivity implements View.OnClick
                     }
                 });
         dialog.show();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("restaurants", (ArrayList<? extends Parcelable>) result);
+        super.onSaveInstanceState(outState);
     }
 }
