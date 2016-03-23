@@ -64,7 +64,7 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantViewHolder
             notifyItemChanged(mCurrentlyExpandedPosition);
         }
         // Show the actions for the clicked list item.
-        viewHolder.showActions(true,restaurantList.get(viewHolder.rowId));
+        viewHolder.showActions(true,restaurantList.get(viewHolder.getAdapterPosition()));
         mCurrentlyExpandedPosition = viewHolder.getAdapterPosition();
         mCurrentlyExpandedRowId = viewHolder.rowId;
     }
@@ -91,14 +91,14 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantViewHolder
     private void bindCallLogListViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
         RestaurantViewHolder views = (RestaurantViewHolder) viewHolder;
-        Restaurant ri = restaurantList.get(position);
+        Restaurant ri = restaurantList.get(viewHolder.getAdapterPosition());
         views.rowId=position;
         views.vName.setText(ri.getName());
         views.vAddress.setText(ri.getAddress());
 
 /*      views.cWeb.setText(ri.getWebsite() == null ? "" : ri.getWebsite());
         views.cTel.setText(ri.getTel()==null ? "" : ri.getTel());*/
-        views.showActions(mCurrentlyExpandedPosition == position,restaurantList.get(position));
+        views.showActions(mCurrentlyExpandedPosition == position,restaurantList.get(viewHolder.getAdapterPosition()));
 
     }
 

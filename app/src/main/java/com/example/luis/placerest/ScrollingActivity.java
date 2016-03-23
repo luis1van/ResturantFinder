@@ -91,7 +91,7 @@ public class ScrollingActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        requestSomething(url+"filters={\"$and\":[{\"country\":{\"$eq\":\"PR\"}},{\"locality\":{\"$search\":\""+query+"\"}}," + "{\"category_labels\":{\"$includes\":\"restaurant\"}}]}"+Key);
+        requestSomething(url+"filters={\"$and\":[{\"country\":{\"$eq\":\"US\"}},{\"locality\":{\"$search\":\""+query+"\"}}," + "{\"category_labels\":{\"$includes\":\"restaurant\"}}]}"+Key);
         return true;
     }
 
@@ -115,9 +115,9 @@ public class ScrollingActivity extends AppCompatActivity implements View.OnClick
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+/*        if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 /*        if (id == R.id.action_go) {
             requestSomething(url+"filters={\"$and\":[{\"country\":{\"$eq\":\"PR\"}}," + "{\"category_labels\":{\"$includes\":\"restaurant\"}}]}"+Key);
             return true;

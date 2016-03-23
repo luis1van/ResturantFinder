@@ -22,6 +22,7 @@ public class RestaurantViewHolder extends RecyclerView.ViewHolder {
         public int rowId;
         public View actionsView;
         public CardView cardView;
+        public ViewStub stub;
 
         public RestaurantViewHolder(Context context, View.OnClickListener expandCollapseListener, View v, View primaryActionView,CardView cardView,TextView vName, TextView vAddress) {
                 super(v);

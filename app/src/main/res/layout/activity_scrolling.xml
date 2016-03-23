@@ -34,6 +34,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/searchView"
                 android:layout_gravity="center_horizontal"
+                android:queryHint="Enter City"
                 android:paddingEnd="40dp"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -54,7 +55,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="2dp"
+        android:background="@color/background"/>
 
     <!--<include layout="@layout/content_scrolling" />-->
 

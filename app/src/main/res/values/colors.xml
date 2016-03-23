@@ -11,7 +11,7 @@
     <color name="colorSecondaryText">#727272</color>
     <color name="colorIcons">#FFFFFF</color>
     <color name="colorDivider">#B6B6B6</color>
-    <color name="empty_list_text_color">#b2b2b2</color>
+    <color name="background">#F1F2F2</color>
 </resources>
 
 
