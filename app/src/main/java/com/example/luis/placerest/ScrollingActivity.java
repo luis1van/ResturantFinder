@@ -9,9 +9,9 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.os.PersistableBundle;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -27,18 +27,25 @@ import android.widget.SearchView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.factual.driver.Circle;
+import com.factual.driver.Factual;
+import com.factual.driver.Query;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
-public class ScrollingActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener, LocationListener {
+public class ScrollingActivity extends AppCompatActivity implements View.OnClickListener, SearchView.OnQueryTextListener{
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private LinearLayoutManager mLayoutManager;
-    private String url= "http://api.v3.factual.com/t/places?";
-    private String Key ="&KEY=Fe1VbH3aYNfVeODXyT2ecPcq7FBeeCIeGbEfFIk5&limit=20";
     List result;
 
 
@@ -82,8 +89,13 @@ public class ScrollingActivity extends AppCompatActivity implements View.OnClick
         Location loc = requestLocation();
         if(loc != null){
 
-            requestSomething(url+"geo={\"$circle\":{\"$center\":["+loc.getLatitude()+","+loc.getLongitude()+"],\"$meters\":10000}}" +
-                    "&filters={\"category_labels\":{\"$includes\":\"restaurant\"}}"+Key);
+            /*requestSomething(url+"geo={\"$circle\":{\"$center\":["+loc.getLatitude()+","+loc.getLongitude()+"],\"$meters\":10000}}" +
+                    "&filters={\"category_labels\":{\"$includes\":\"restaurant\"}}"+Key);*/
+            Query q = new Query()
+                    .within(new Circle(loc.getLatitude(), loc.getLongitude(), 5000))
+                    .sortAsc("$distance").field("category_labels").includes("restaurant").limit(20);
+            new QueryTask().execute(q);
+
         }
         Snackbar.make(view, "Loading", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
@@ -91,7 +103,9 @@ public class ScrollingActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        requestSomething(url+"filters={\"$and\":[{\"country\":{\"$eq\":\"US\"}},{\"locality\":{\"$search\":\""+query+"\"}}," + "{\"category_labels\":{\"$includes\":\"restaurant\"}}]}"+Key);
+        Query q = new Query().field("locality").search(query).field("country").isEqual("PR").field("category_labels").includes("restaurant").limit(20);
+        new QueryTask().execute(q);
+
         return true;
     }
 
@@ -118,14 +132,18 @@ public class ScrollingActivity extends AppCompatActivity implements View.OnClick
 /*        if (id == R.id.action_settings) {
             return true;
         }*/
-/*        if (id == R.id.action_go) {
-            requestSomething(url+"filters={\"$and\":[{\"country\":{\"$eq\":\"PR\"}}," + "{\"category_labels\":{\"$includes\":\"restaurant\"}}]}"+Key);
+       if (id == R.id.action_go) {
+
+           Query q = new Query().field("name").search("Fried Chicken").field("country").isEqual("PR").limit(20);
+
+           new QueryTask().execute(q);
             return true;
-        }*/
+        }
         return super.onOptionsItemSelected(item);
     }
 
     public void updateList(List lis) {
+        getList().clear();
         getList().addAll(lis);
         this.mAdapter.notifyDataSetChanged();
     }
@@ -134,8 +152,8 @@ public class ScrollingActivity extends AppCompatActivity implements View.OnClick
         return this.result;
     }
 
-    public void requestSomething(String URl) {
-       /* String url = "https://rocky-shore-7054.herokuapp.com/api/top";*/
+ /*   public void requestSomething(String URl) {
+
         @SuppressWarnings("unchecked")
         GsonRequest gReq = new GsonRequest(URl, Restaurant.class, null, new Response.Listener() {
             @Override
@@ -151,27 +169,7 @@ public class ScrollingActivity extends AppCompatActivity implements View.OnClick
                     }
                 });
         RequestSingleton.getInstance(this.getApplicationContext()).addToRequestQueue(gReq);
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
+    }*/
 
     public Location requestLocation() {
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -202,11 +200,41 @@ public class ScrollingActivity extends AppCompatActivity implements View.OnClick
                     }
                 });
         dialog.show();
+
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("restaurants", (ArrayList<? extends Parcelable>) result);
         super.onSaveInstanceState(outState);
+    }
+
+    private class QueryTask extends AsyncTask<Query, Void, List> {
+        @Override
+
+
+        /** The system calls this to perform work in a worker thread and
+         * delivers it the parameters given to AsyncTask.execute() */
+        protected List doInBackground(Query... q) {
+
+            Factual factual = FactualSingleton.getFactual();
+            Gson gson = new Gson();
+            String json = factual.fetch("places", q[0]).getJson();
+            JsonElement elementR = (new JsonParser()).parse(json).getAsJsonObject();
+            JsonArray arr = elementR.getAsJsonObject().get("response").getAsJsonObject().get("data").getAsJsonArray();
+
+            List<Restaurant> list = Arrays.asList(gson.fromJson(arr, Restaurant[].class));
+
+            return list;
+
+        }
+
+         /**The system calls this to perform work in the UI thread and delivers
+         * the result from doInBackground() */
+        protected void onPostExecute(List s) {
+            updateList(s);
+        }
+
+
     }
 }

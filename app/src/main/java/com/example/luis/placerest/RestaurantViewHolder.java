@@ -19,6 +19,8 @@ public class RestaurantViewHolder extends RecyclerView.ViewHolder {
         protected TextView vAddress;
         protected TextView cTel;
         protected TextView cWeb;
+        public String web;
+        public String tel;
         public int rowId;
         public View actionsView;
         public CardView cardView;
@@ -37,10 +39,10 @@ public class RestaurantViewHolder extends RecyclerView.ViewHolder {
                 primaryActionView.setOnClickListener(mExpandCollapseListener);
         }
 
-        public void showActions(boolean show, Restaurant rest) {
+        public void showActions(boolean show) {
                 if (show) {
                         // Inflate the view stub if necessary, and wire up the event handlers.
-                        inflateActionViewStub(rest);
+                        inflateActionViewStub();
 
                         actionsView.setVisibility(View.VISIBLE);
                         actionsView.setAlpha(1.0f);
@@ -53,18 +55,15 @@ public class RestaurantViewHolder extends RecyclerView.ViewHolder {
                 }
         }
 
-        private void inflateActionViewStub(Restaurant rest) {
+        private void inflateActionViewStub() {
                 ViewStub stub = (ViewStub) rootView.findViewById(R.id.viewStub);
                 if (stub != null) {
-                        actionsView = (ViewGroup) stub.inflate();
+                        actionsView = stub.inflate();
                         cTel = (TextView) actionsView.findViewById(R.id.tel_text);
                         cWeb = (TextView) actionsView.findViewById(R.id.web_text);
-                        cTel.setText(rest.getTel());
-                        cWeb.setText(rest.getWebsite());
                 }
-
-/*                bindActionButtons();*/
-
+                cTel.setText(tel == null ? "" : tel);
+                cWeb.setText(web == null ? "" : web);
         }
 
         public static RestaurantViewHolder create(

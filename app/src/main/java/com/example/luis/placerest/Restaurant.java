@@ -32,6 +32,31 @@ public class Restaurant implements Parcelable{
         this.region = region;
     }
 
+    protected Restaurant(Parcel in) {
+        address = in.readString();
+        country = in.readString();
+        name = in.readString();
+        region = in.readString();
+        locality = in.readString();
+        tel = in.readString();
+        website = in.readString();
+        latitude = in.readInt();
+        longitude = in.readInt();
+        postCode = in.readInt();
+    }
+
+    public static final Creator<Restaurant> CREATOR = new Creator<Restaurant>() {
+        @Override
+        public Restaurant createFromParcel(Parcel in) {
+            return new Restaurant(in);
+        }
+
+        @Override
+        public Restaurant[] newArray(int size) {
+            return new Restaurant[size];
+        }
+    };
+
     public String getLocality() {
         return locality;
     }

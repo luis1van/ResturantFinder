@@ -9,11 +9,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
+
 public class RequestSingleton {
     private static RequestSingleton mInstance;
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
     private static Context mCtx;
+
 
     private RequestSingleton(Context context) {
         mCtx = context;
@@ -43,8 +45,10 @@ public class RequestSingleton {
         return mInstance;
     }
 
+
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
+
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.
             mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
